@@ -66,7 +66,6 @@ class TestParser(unittest.TestCase):
     def test_clean_end(self):
         parser = Parser(self.filepath, self.field_map)
         for d in parser:
-            print(d)
             pass
 
 if __name__ == '__main__':
