@@ -9,7 +9,7 @@ import csv
 
 class Parser(object):
     def __init__(self, filepath, field_map, dialect=None,
-            has_header=None):
+            has_header=None, line_skip=0):
         """Initializes parser 
         Arguments:
             filepath (str)    : path of target file
@@ -20,6 +20,10 @@ class Parser(object):
             has_header (bool) : required, if not specified in dialect kwarg
                                 optional, if relying on auto-detection
                                 for dialect
+            line_skip (int)   : optional, default = 0;
+                                in case junk is present at top of file,
+                                this is an easy way to skip initial lines
+                                containing junk data
         """
         self.has_header = has_header
         self.field_map  = field_map
@@ -31,6 +35,10 @@ class Parser(object):
             dialect    = self._dialect(filepath)
         self.dialect   = dialect
         self.reader    = csv.reader(open(filepath, 'rb'), dialect=dialect)
+
+        # skip junk data if specified
+        for i in range(line_skip):
+            self.reader.next()
 
         # skip first row if file is thought to have header
         if self.has_header:
