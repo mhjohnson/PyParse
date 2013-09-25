@@ -9,7 +9,7 @@ import csv
 
 class Parser(object):
     def __init__(self, filepath, field_map, dialect=None,
-            has_header=None, line_skip=0):
+            has_header=None, line_skip=0, firstRow_kw=''):
         """Initializes parser 
         Arguments:
             filepath (str)    : path of target file
@@ -24,6 +24,14 @@ class Parser(object):
                                 in case junk is present at top of file,
                                 this is an easy way to skip initial lines
                                 containing junk data
+            firstRow_kw (str) : optional, default = '';
+                                in case junk data is present at top of file,
+                                you can specify the first word of the 1st line 
+                                that appears after junk data; this will cause the 
+                                reader to skip all previous rows
+
+                                NOTE: you must manually specify the  has_header
+                                keyword argument, if using this feature
         """
         self.has_header = has_header
         self.field_map  = field_map
@@ -36,9 +44,27 @@ class Parser(object):
         self.dialect   = dialect
         self.reader    = csv.reader(open(filepath, 'rb'), dialect=dialect)
 
+        # skip junk data if firstRow_kw specified
+        if firstRow_kw != '':
+            try:
+                reader_cp = csv.reader(open(filepath, 'rb'), dialect=dialect)
+                while True:
+                    row = reader_cp.next()
+                    if row[0].upper().startswith(firstRow_kw.upper()):
+                        break
+                    self.reader.next() # actually skip row
+
+                # remove copy stored in memory
+                del reader_cp
+
+            except StopIteration:
+                raise Exception("First row keyword was not found")
+                
+
         # skip junk data if specified
         for i in range(line_skip):
             self.reader.next()
+        
 
         # skip first row if file is thought to have header
         if self.has_header:

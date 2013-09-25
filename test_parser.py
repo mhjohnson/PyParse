@@ -63,6 +63,21 @@ class TestParser(unittest.TestCase):
         self.assertEqual(first_row['streetAddress'], '131 Monaro Street')
         self.assertEqual(len(first_row.keys()), 2, "dictionary should only represent 2 fields!")
 
+    def test_skip_junk_data_by_kw(self):
+        """Check that Parser will skip junk data (eg: description) at top of file and find first row
+        by a keyword"""
+
+        filepath = 'tests/example_w_junk_heading.csv'
+        options = {
+                'has_header'  : True, # must be forced
+                'firstRow_kw' : 'Fcilty_typ',
+        }
+
+        parser = Parser(filepath, self.field_map, **options)
+        first_row = parser.next()
+        self.assertEqual(first_row['facilityName'], 'Queanbeyan', "Should have return first row with anticipated facilityName")
+        
+
     def test_clean_end(self):
         parser = Parser(self.filepath, self.field_map)
         for d in parser:
