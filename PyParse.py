@@ -1,5 +1,5 @@
 """
-PyParse v1.1.6
+PyParse v1.1.7
     The overall goal of this project was to make parsing files an easier
     and more *maintainable* task.
     Author: Matthew H. Johnson, PharmD.
@@ -9,11 +9,13 @@ import csv
 
 class Parser(object):
     def __init__(self, filepath, field_map, dialect=None,
-            has_header=None, line_skip=0, firstRow_kw='', read_mode='rb'):
+            has_header=None, line_skip=0, firstRow_kw='', read_mode='rU'):
         """Initializes parser 
+
         Arguments:
             filepath (str)    : path of target file
             field_map (dict)  : fieldname -> index (int) value map of fields for rows
+
         Kwargs:
             dialect (obj)     : optional, predefined csv dialect
                                 if not provided in kwargs, will attempt to auto-detect 
