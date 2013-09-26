@@ -1,5 +1,5 @@
 """
-PyParse v1.0
+PyParse v1.1.6
     The overall goal of this project was to make parsing files an easier
     and more *maintainable* task.
     Author: Matthew H. Johnson, PharmD.
@@ -14,12 +14,12 @@ class Parser(object):
         Arguments:
             filepath (str)    : path of target file
             field_map (dict)  : fieldname -> index (int) value map of fields for rows
+        Kwargs:
             dialect (obj)     : optional, predefined csv dialect
                                 if not provided in kwargs, will attempt to auto-detect 
                                 the csv dialect 
-            has_header (bool) : required, if not specified in dialect kwarg
-                                optional, if relying on auto-detection
-                                for dialect
+            has_header (bool) : optional, if relying on auto-detection for dialect
+                                required, if custom csv dialect is specified
             line_skip (int)   : optional, default = 0;
                                 in case junk is present at top of file,
                                 this is an easy way to skip initial lines
@@ -30,12 +30,13 @@ class Parser(object):
                                 that appears after junk data; this will cause the 
                                 reader to skip all previous rows
 
-                                NOTE: you must manually specify the  has_header
+                                *NOTE* - you must manually specify the 'has_header'
                                 keyword argument, if using this feature
-            read_mode (str)   : optional, default = 'rb';
-                                opener method to use when reading file; sometimes a 
-                                file will need to be opened in universial read-mode
-                                (ie: 'rU')
+
+            read_mode (str)   : optional, default = 'rU';
+                                this is opener method to use when reading files; 
+                                sometimes it may be desired to read a file in
+                                binary mode (ie: 'rb')
         """
         self.read_mode  = read_mode
         self.has_header = has_header
