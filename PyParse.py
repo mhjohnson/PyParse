@@ -9,7 +9,7 @@ import csv
 
 class Parser(object):
     def __init__(self, filepath, field_map, dialect=None,
-            has_header=None, line_skip=0, firstRow_kw=''):
+            has_header=None, line_skip=0, firstRow_kw='', read_mode='rb'):
         """Initializes parser 
         Arguments:
             filepath (str)    : path of target file
@@ -32,7 +32,12 @@ class Parser(object):
 
                                 NOTE: you must manually specify the  has_header
                                 keyword argument, if using this feature
+            read_mode (str)   : optional, default = 'rb';
+                                opener method to use when reading file; sometimes a 
+                                file will need to be opened in universial read-mode
+                                (ie: 'rU')
         """
+        self.read_mode  = read_mode
         self.has_header = has_header
         self.field_map  = field_map
         self.header     = field_map.keys()
@@ -42,12 +47,12 @@ class Parser(object):
         if not dialect:
             dialect    = self._dialect(filepath)
         self.dialect   = dialect
-        self.reader    = csv.reader(open(filepath, 'rb'), dialect=dialect)
+        self.reader    = csv.reader(open(filepath, read_mode), dialect=dialect)
 
         # skip junk data if firstRow_kw specified
         if firstRow_kw != '':
             try:
-                reader_cp = csv.reader(open(filepath, 'rb'), dialect=dialect)
+                reader_cp = csv.reader(open(filepath, read_mode), dialect=dialect)
                 while True:
                     row = reader_cp.next()
                     if row[0].upper().startswith(firstRow_kw.upper()):
@@ -97,7 +102,7 @@ class Parser(object):
         Arguments:
             filepath (str): filepath of target csv file
         """
-        with open(filepath, 'rb') as csvfile:
+        with open(filepath, self.read_mode) as csvfile:
             sample = csvfile.read(1024)
             dialect = csv.Sniffer().sniff(sample)
             if self.has_header == None:
